@@ -79,4 +79,8 @@ class Map
   def [](location)
     heights[location.row][location.column]
   end
+
+  def basins
+    @basins = local_minima_locations.map { |local_minimum_location| Basin.new(minimum_location: local_minimum_location, map: self) }
+  end
 end
