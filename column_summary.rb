@@ -14,11 +14,15 @@ class ColumnSummary
     @count ||= 0
   end
 
+  def zeroes_count
+    count - ones_count
+  end
+
   def most_common_value
-    ones_count > (count - ones_count) ? 1 : 0
+    ones_count >= zeroes_count ? 1 : 0
   end
 
   def least_common_value
-    most_common_value == 1 ? 0 : 1
+    ones_count < zeroes_count ? 1 : 0
   end
 end
