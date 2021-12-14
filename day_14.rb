@@ -5,10 +5,7 @@ File.open('day_14_input.txt') do |file|
 # File.open('day_14_input_small.txt') do |file|
   initial_polymer = Polymer.from_file(file)
   polymer = initial_polymer
-  10.times { polymer = polymer.succ }
-
-  puts polymer.elements.join("")
-  puts polymer.elements.size
+  40.times { polymer = polymer.succ }
 
   puts polymer.elements_distribution
 
