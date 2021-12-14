@@ -90,4 +90,8 @@ class OctopusGrid
     row_strings = rows.map { |row| row.join("") }
     row_strings.join("\n")
   end
+
+  def size
+    @size ||= rows.map(&:size).sum
+  end
 end
