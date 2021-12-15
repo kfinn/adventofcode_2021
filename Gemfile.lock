@@ -11,6 +11,7 @@ GEM
     i18n (1.8.11)
       concurrent-ruby (~> 1.0)
     minitest (5.14.4)
+    rb_heap (1.1.0)
     tzinfo (2.0.4)
       concurrent-ruby (~> 1.0)
     zeitwerk (2.5.1)
@@ -20,6 +21,7 @@ PLATFORMS
 
 DEPENDENCIES
   activesupport (~> 6.1, >= 6.1.4.1)
+  rb_heap (~> 1.1)
 
 BUNDLED WITH
    2.2.22

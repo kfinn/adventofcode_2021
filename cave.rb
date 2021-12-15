@@ -51,26 +51,24 @@ class Cave
   end
 
   def safest_path
-    unvisited_vertices = Set.new(vertices_by_position.values)
     total_risks_by_vertex = { start_vertex => 0 }
+    vertices_to_visit = Heap.new do |lhs, rhs|
+      total_risks_by_vertex[lhs] < total_risks_by_vertex[rhs]
+    end
+    vertices_to_visit << start_vertex
 
-    current_vertex = start_vertex
     until total_risks_by_vertex.include?(end_vertex)
+      current_vertex = vertices_to_visit.pop
       current_total_risk = total_risks_by_vertex[current_vertex]
-      current_edges_to_traverse = current_vertex.edges.select do |edge|
-        unvisited_vertices.include? edge.destination
-      end
-      current_edges_to_traverse.each do |edge|
-        total_risk_to_destination = [edge.weight + current_total_risk, total_risks_by_vertex[edge.destination]].compact.min
-        total_risks_by_vertex[edge.destination] = total_risk_to_destination
-      end
-      unvisited_vertices.delete(current_vertex)
 
-      reachable_unvisited_vertices = unvisited_vertices.select do |unvisited_vertex|
-        total_risks_by_vertex.include? unvisited_vertex
-      end
-      current_vertex = reachable_unvisited_vertices.min_by do |reachable_vertex|
-        total_risks_by_vertex[reachable_vertex]
+      current_vertex.edges.each do |edge|
+        destination = edge.destination
+        current_risk_to_destination = edge.weight + current_total_risk
+        existing_risk_to_destination = total_risks_by_vertex[destination]
+        if existing_risk_to_destination.blank? || current_risk_to_destination < existing_risk_to_destination
+          total_risks_by_vertex[destination] = current_risk_to_destination
+          vertices_to_visit << destination if vertices_to_visit.to_a.exclude? destination
+        end
       end
     end
 

@@ -1,4 +1,5 @@
 require 'active_support/all'
+require 'rb_heap'
 require './cave'
 require './position'
 require './vertex'
