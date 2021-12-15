@@ -1,12 +1,24 @@
 class Cave
   def self.from_file(file)
-    risks_grid = file.each_line.map.with_index do |line, row_index|
+    input_risks_grid = file.each_line.map.with_index do |line, row_index|
       line.each_char.map(&:presence).compact.map.with_index do |char, column_index|
         char.to_i
       end
     end
 
-    new(risks_grid)
+    tiled_risks_grid = (0..4).flat_map do |tile_row_index|
+      input_risks_grid.map do |input_risks_row|
+        (0..4).flat_map do |tile_column_index|
+          input_risks_row.map do |risk|
+            ((risk + tile_row_index + tile_column_index - 1) % 9) + 1
+          end
+        end
+      end
+    end
+
+    # puts tiled_risks_grid.map(&:join).join("\n")
+
+    new(tiled_risks_grid)
   end
 
   def initialize(risks_grid)
