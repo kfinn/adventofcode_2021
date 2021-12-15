@@ -1,7 +1,8 @@
 require 'active_support/all'
 require './cave'
-require './cave_position'
 require './position'
+require './vertex'
+require './edge'
 
 File.open('day_15_input.txt') do |file|
 # File.open('day_15_input_small.txt') do |file|

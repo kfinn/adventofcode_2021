@@ -1,61 +1,79 @@
 class Cave
   def self.from_file(file)
-    rows = file.each_line.map.with_index do |line, row_index|
+    risks_grid = file.each_line.map.with_index do |line, row_index|
       line.each_char.map(&:presence).compact.map.with_index do |char, column_index|
-        CavePosition.new(char.to_i, Position.new(row_index, column_index))
+        char.to_i
       end
     end
 
-    new(rows)
+    new(risks_grid)
   end
 
-  def initialize(rows)
-    @rows = rows
+  def initialize(risks_grid)
+    @risks_grid = risks_grid
+  end
 
-    rows.each do |row|
-      row.each do |cave_position|
-        cave_position.cave = self
+  attr_reader :risks_grid
+
+  def start_vertex
+    vertices_by_position[Position.new(0, 0)]
+  end
+
+  def end_vertex
+    vertices_by_position[Position.new(risks_grid.size - 1, risks_grid.last.size - 1)]
+  end
+
+  def vertices_by_position
+    @vertices_by_position ||=
+      risks_grid
+      .each_with_index
+      .with_object(
+        Hash.new { |hash, position| hash[position] = Vertex.new }
+      ) do |(risks_row, row_index), vertices_by_position_builder|
+        risks_row.each_with_index do |risk, column_index|
+          vertex = vertices_by_position_builder[Position.new(row_index, column_index)]
+          vertex.edges =
+            [
+              row_index > 0 ? Position.new(row_index - 1, column_index) : nil,
+              column_index > 0 ? Position.new(row_index, column_index - 1) : nil,
+              row_index < risks_grid.size - 1 ? Position.new(row_index + 1, column_index) : nil,
+              column_index < risks_row.size - 1 ? Position.new(row_index, column_index + 1) : nil
+            ]
+            .compact
+            .map do |neighbor_position|
+              Edge.new(
+                vertices_by_position_builder[neighbor_position],
+                risks_grid[neighbor_position.row][neighbor_position.column]
+              )
+            end
       end
     end
-  end
-
-  attr_reader :rows
-
-  def [](position)
-    rows[position.row][position.column]
-  end
-
-  def start_cave_position
-    @start_cave_position ||= rows.first.first
-  end
-
-  def end_cave_position
-    @end_cave_position ||= rows.last.last
   end
 
   def safest_path
-    unvisited_cave_positions = rows.flatten
-    total_risks_by_position = {}
-    total_risks_by_position[start_cave_position.position] = 0
+    unvisited_vertices = Set.new(vertices_by_position.values)
+    total_risks_by_vertex = { start_vertex => 0 }
 
-    current_cave_position = start_cave_position
-    until total_risks_by_position.include?(end_cave_position.position)
-      current_total_risk = total_risks_by_position[current_cave_position.position]
-      current_neighbors_to_visit = current_cave_position.neighbors & unvisited_cave_positions
-      current_neighbors_to_visit.each do |neighbor|
-        total_risk_to_neighbor = [neighbor.risk + current_total_risk, total_risks_by_position[neighbor.position]].compact.min
-        total_risks_by_position[neighbor.position] = total_risk_to_neighbor
+    current_vertex = start_vertex
+    until total_risks_by_vertex.include?(end_vertex)
+      current_total_risk = total_risks_by_vertex[current_vertex]
+      current_edges_to_traverse = current_vertex.edges.select do |edge|
+        unvisited_vertices.include? edge.destination
       end
-      unvisited_cave_positions.delete(current_cave_position)
+      current_edges_to_traverse.each do |edge|
+        total_risk_to_destination = [edge.weight + current_total_risk, total_risks_by_vertex[edge.destination]].compact.min
+        total_risks_by_vertex[edge.destination] = total_risk_to_destination
+      end
+      unvisited_vertices.delete(current_vertex)
 
-      reachable_unvisited_cave_positions = unvisited_cave_positions.select do |unvisited_cave_position|
-        total_risks_by_position.include? unvisited_cave_position.position
+      reachable_unvisited_vertices = unvisited_vertices.select do |unvisited_vertex|
+        total_risks_by_vertex.include? unvisited_vertex
       end
-      current_cave_position = reachable_unvisited_cave_positions.min_by do |reachable_unvisited_cave_position|
-        total_risks_by_position[reachable_unvisited_cave_position.position]
+      current_vertex = reachable_unvisited_vertices.min_by do |reachable_vertex|
+        total_risks_by_vertex[reachable_vertex]
       end
     end
 
-    total_risks_by_position[end_cave_position.position]
+    total_risks_by_vertex[end_vertex]
   end
 end
