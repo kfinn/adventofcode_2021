@@ -10,7 +10,8 @@ File.open("day_7_input.txt") do |file|
   
   fuel_cost = lambda do |target|
     starting_crab_positions.sum do |crab_position|
-      (target - crab_position).abs
+      distance = (target - crab_position).abs
+      (distance * (distance + 1)) / 2
     end
   end
 
