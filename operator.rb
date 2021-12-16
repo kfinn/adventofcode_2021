@@ -43,4 +43,22 @@ class Operator
   def version_numbers_sum
     version + sub_packets.map(&:version_numbers_sum).sum
   end
+
+  OPERATOR_STRATEGIES_BY_TYPE_ID = {
+    0 => lambda { |values| values.sum },
+    1 => lambda { |values| values.reduce(1) { |product, value| product * value } },
+    2 => lambda { |values| values.min },
+    3 => lambda { |values| values.max },
+    5 => lambda { |values| values.first > values.second ? 1 : 0 },
+    6 => lambda { |values| values.first < values.second ? 1 : 0 },
+    7 => lambda { |values| values.first == values.second ? 1 : 0 }
+  }
+
+  def operator_strategy
+    OPERATOR_STRATEGIES_BY_TYPE_ID[type_id]
+  end
+
+  def value
+    operator_strategy.call(sub_packets.map(&:value))
+  end
 end

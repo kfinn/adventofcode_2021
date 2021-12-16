@@ -14,4 +14,5 @@ File.open("day_16_input.txt") do |file|
   packet = Packet.from_bit_stream(bit_stream)
   puts packet
   puts packet.version_numbers_sum
+  puts packet.value
 end
