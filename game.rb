@@ -36,12 +36,24 @@ class Game
 
   attr_reader :random_seed, :boards, :last_played_number
 
+  def turn_index
+    @turn_index ||= 0
+  end
+
+  attr_writer :turn_index
+
   def play!
-    while boards.none?(&:won?)
+    while boards.any? { |board| !board.won? }
+      self.turn_index += 1
       played_numbers << (@last_played_number = random_seed.shift)
+      boards.each(&:test_for_winning!)
     end
 
-    boards.find(&:won?)
+    boards.min_by { |board| board.victory_state.turn_index }
+  end
+
+  def last_winning_board
+    boards.max_by { |board| board.victory_state.turn_index }
   end
 
   def played_numbers

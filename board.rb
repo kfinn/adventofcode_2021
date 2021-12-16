@@ -1,4 +1,6 @@
 class Board
+  VictoryState = Struct.new(:turn_index, :played_numbers, :last_played_number)
+
   def initialize(grid, index)
     @grid = grid
     @index = index
@@ -14,14 +16,29 @@ class Board
   def score
     return 0 unless won?
 
-    unplayed_numbers = grid.flatten.select { |number| game.unplayed? number }
-    unplayed_numbers.sum * game.last_played_number
+    unplayed_numbers = grid.flatten.select { |number| victory_state.played_numbers.exclude? number }
+    unplayed_numbers.sum * victory_state.last_played_number
   end
 
-  def won?
-    win_vectors.any? do |win_vector|
-      win_vector.all? { |number| game.played? number }
+  def test_for_winning!
+    return if won?
+    return if win_vectors.none? do |win_vector|
+      win_vector.all? do |number|
+        game.played? number
+      end
     end
+
+    @victory_state = VictoryState.new(
+      game.turn_index,
+      game.played_numbers.dup,
+      game.last_played_number
+    )
+  end
+
+  attr_reader :victory_state
+
+  def won?
+    victory_state.present?
   end
 
   def win_vectors
