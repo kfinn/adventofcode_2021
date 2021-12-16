@@ -22,23 +22,30 @@ class Line
   attr_reader :start_point, :end_point
 
   def draw_to(map)
-    return if start_point.x != end_point.x && start_point.y != end_point.y
-
     if start_point.x == end_point.x
-      y_values = [start_point.y, end_point.y]
-      min_y = y_values.min
-      max_y = y_values.max
+      y_terminal_values = [start_point.y, end_point.y]
+      min_y = y_terminal_values.min
+      max_y = y_terminal_values.max
 
       (min_y..max_y).each do |y|
         map[Point.new(start_point.x, y)] += 1
       end
-    else
-      x_values = [start_point.x, end_point.x]
-      min_x = x_values.min
-      max_x = x_values.max
+    elsif start_point.y == end_point.y
+      x_terminal_values = [start_point.x, end_point.x]
+      min_x = x_terminal_values.min
+      max_x = x_terminal_values.max
 
       (min_x..max_x).each do |x|
         map[Point.new(x, start_point.y)] += 1
+      end
+    else
+      y_values = (start_point.y > end_point.y ? start_point.y.downto(end_point.y) : start_point.y.upto(end_point.y)).to_a
+      x_values = (start_point.x > end_point.x ? start_point.x.downto(end_point.x) : start_point.x.upto(end_point.x)).to_a
+
+      raise "invalid line, not a 45 degree angle: #{start_point} -> #{end_point}" unless y_values.size == x_values.size
+
+      x_values.zip(y_values).each do |x, y|
+        map[Point.new(x, y)] += 1
       end
     end
   end
