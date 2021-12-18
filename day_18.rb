@@ -13,4 +13,17 @@ File.open('day_18_input.txt') do |file|
   puts sum
 
   puts sum.magnitude
+
+  snailfish_number_pairs = snailfish_numbers.flat_map.with_index do |first_snailfish_number, first_snailfish_number_index|
+    snailfish_numbers.slice((first_snailfish_number_index + 1)..).flat_map do |second_snailfish_number|
+      [
+        [first_snailfish_number, second_snailfish_number],
+        [second_snailfish_number, first_snailfish_number]
+      ]
+    end
+  end
+
+  snailfish_number_pair_sums = snailfish_number_pairs.map { |lhs, rhs| lhs + rhs }
+  snailfish_number_pair_sum_magnitudes = snailfish_number_pair_sums.map(&:magnitude)
+  puts "max magnitude: #{snailfish_number_pair_sum_magnitudes.max}"
 end
