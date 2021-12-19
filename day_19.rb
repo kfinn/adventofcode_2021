@@ -60,4 +60,19 @@ File.open('day_19_input.txt') do |file|
   end
   puts all_absolute_beacon_readings.map(&:to_s)
   puts all_absolute_beacon_readings.size
+
+  scanner_origins = [RelativePosition.new(0, 0, 0)]
+  relative_scanner_readings.each do |relative_scanner_reading|
+    scanner_origins << scanner_reading_transforms_to_absolute[relative_scanner_reading].apply(RelativePosition.new(0, 0, 0))
+  end
+
+  max_distance = 0
+  scanner_origins.each do |first_scanner_origin|
+    scanner_origins.each do |second_scanner_origin|
+      difference = first_scanner_origin - second_scanner_origin
+      manhattan_distance = difference.x.abs + difference.y.abs + difference.z.abs
+      max_distance = [max_distance, manhattan_distance].max
+    end
+  end
+  puts "max_distance: #{max_distance}"
 end
