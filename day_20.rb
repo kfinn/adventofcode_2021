@@ -28,4 +28,12 @@ File.open("day_20_input.txt") do |file|
 
   puts enhanced_image
   puts enhanced_image.light_pixels_count
+
+  enhanced_image = image
+  50.times do 
+    enhanced_image = enhanced_image.enhance(enhancement)
+  end
+
+  puts enhanced_image
+  puts enhanced_image.light_pixels_count
 end
