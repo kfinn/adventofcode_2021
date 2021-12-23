@@ -115,8 +115,9 @@ class Situation
 
   def cheapest_path
     total_costs_by_situation = { self => 0 }
+    estimated_costs_through_situation = { self => self.estimated_cost_to_destination }
     situations_to_visit = Heap.new do |lhs, rhs|
-      total_costs_by_situation[lhs] < total_costs_by_situation[rhs]
+      estimated_costs_through_situation[lhs] < estimated_costs_through_situation[rhs]
     end
     situations_to_visit_set = Set.new
     situations_to_visit << self
@@ -125,8 +126,9 @@ class Situation
     counter = 0
 
     # 100.times do
-    while true
+    while situations_to_visit_set.any?
       current_situation = situations_to_visit.pop
+      
       situations_to_visit_set.delete(current_situation)
       current_total_cost_to_situation = total_costs_by_situation[current_situation]
       return current_total_cost_to_situation if current_situation.completed?
@@ -141,6 +143,7 @@ class Situation
         existing_risk_to_next_situation = total_costs_by_situation[next_situation]
         if existing_risk_to_next_situation.blank? || current_risk_to_next_situation < existing_risk_to_next_situation
           total_costs_by_situation[next_situation] = current_risk_to_next_situation
+          estimated_costs_through_situation[next_situation] = current_risk_to_next_situation + next_situation.estimated_cost_to_destination
           if situations_to_visit_set.exclude?(next_situation)
             situations_to_visit << next_situation 
             situations_to_visit_set << next_situation
@@ -187,5 +190,9 @@ class Situation
       s << "\n"
     end
     s + "\n"
+  end
+
+  def estimated_cost_to_destination
+    amphipods.sum(&:estimated_cost_to_destination)
   end
 end
