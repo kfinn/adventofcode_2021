@@ -125,7 +125,6 @@ class Situation
 
     counter = 0
 
-    # 100.times do
     while situations_to_visit_set.any?
       current_situation = situations_to_visit.pop
       
@@ -133,8 +132,10 @@ class Situation
       current_total_cost_to_situation = total_costs_by_situation[current_situation]
       return current_total_cost_to_situation if current_situation.completed?
 
-      # puts current_situation.to_s
-      puts current_situation.to_s if counter % 1024 == 1
+      if counter % 1024 == 1
+        puts current_situation.to_s
+        puts "situations to visit size: #{situations_to_visit_set.size}"
+      end
       counter = (counter + 1) % 1024
 
       current_situation.moves.each do |move|

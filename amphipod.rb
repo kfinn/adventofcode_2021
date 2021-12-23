@@ -138,9 +138,9 @@ class Amphipod
     return 0 if at_destination? && destination_is_clear?
     
     (
-      (situation.destination_column_for_amphipod_type(type) - position.column).abs +
+      ((situation.destination_column_for_amphipod_type(type) - position.column).abs * 2) +
       (situation.hallway_row_index - position.row).abs +
-      (situation.destination_row_index_range.max - situation.hallway_row_index)
+      ((situation.destination_row_index_range.max + situation.destination_row_index_range.min) / 2 - situation.hallway_row_index)
     ) * step_cost
   end
 end
