@@ -1,0 +1,152 @@
+;; part 1: input
+
+;; colect input
+inp w
+;; set x to acc % 26 (remainder mod 26)
+mul x 0
+add x z
+mod x 26
+
+;; part 2: adjust z
+
+;; option 2a: don't change accumulator, but add an arbitrary amount to its remainder in x
+div z 1
+add x X_ADDEND_ALWAYS_POSITIVE
+
+;; option 2b: throw away accumulator's least significant bit mod 26, decrease its remainder in x by a random amount
+div z 26
+add x X_ADDEND_ALWAYS_NEGATIVE
+
+;; part 3: accumulate in z
+
+
+;; calculate if the accumulator's remainder % 26 + offset from before is equal to the input digit
+eql x w
+eql x 0
+;; set up y to either multiply the accumulator by 1 or 26
+mul y 0
+add y 25
+mul y x
+add y 1
+;; if the accumulator's remainder % 26 + offset == the input, multiply the accumulator by 26. otherwise, leave it unchanged
+mul z y
+;; set y to input + random addend, if 
+mul y 0
+add y w
+add y Y_ADDEND_ALWAYS_POSITIVE
+mul y x
+;; if accumulator's remainder % 26 + offset == input digit, then add input + Y_ADDEND_ALWAYS_POSITIVE to accumulator
+add z y
+
+
+;; stanza 1:
+...
+div z 1
+add x 13
+...
+add y 6
+...
+
+;; stanza 2:
+...
+div z 1
+add x 15
+...
+add y 7
+...
+
+;; stanza 3:
+...
+div z 1
+add x 15
+...
+add y 10
+...
+
+;; stanza 4:
+...
+div z 1
+add x 11
+...
+add y 2
+...
+
+;; stanza 5:
+...
+div z 26
+add x -7
+...
+add y 15
+...
+
+;; stanza 6:
+...
+div z 1
+add x 10
+...
+add y 8
+...
+
+;; stanza 7:
+...
+div z 1
+add x 10
+...
+add y 1
+...
+
+;; stanza 8:
+...
+div z 26
+add x -5
+...
+add y 10
+...
+
+;; stanza 9:
+...
+div z 1
+add x 15
+...
+add y 5
+
+;; stanza 10:
+...
+div z 26
+add x -3
+...
+add y 3
+
+;; stanza 11:
+...
+div z 26
+add x 0
+...
+add y 5
+
+;; stanza 12:
+...
+div z 26
+add x -5
+...
+add y 11
+
+;; stanza 13:
+...
+div z 26
+add x -9
+...
+add y 12
+
+;; stanza 14:
+...
+div z 26
+add x 0
+...
+add y 10
+
+
+
+https://docs.google.com/spreadsheets/d/1_EdORC89mbSa-GVV-2M8-o1DX_v24YPxYIDo-0eb8vg/edit?usp=sharing
+39494195799979
+13161151139617
